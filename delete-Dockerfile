@@ -1,0 +1,26 @@
+FROM keymetrics/pm2:latest
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Install app dependencies
+COPY ecosystem.config.js /usr/src/app/
+COPY package.json /usr/src/app/
+RUN npm install
+
+# Env
+ENV NPM_CONFIG_LOGLEVEL warn
+
+# Show current folder structure in logs
+RUN ls -al -R
+
+# RUN ["apt-get", "update"]
+# RUN ["apt-get", "install", "-y", "vim"]
+
+# Bundle app source
+COPY . /usr/src/app
+
+EXPOSE 3000
+
+CMD ["pm2-docker", "--env", "production", "ecosystem.config.js"]

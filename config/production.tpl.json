@@ -1,0 +1,8 @@
+{
+  "env": "prod",
+  "name": "prod",
+  "server": {
+    "port": 3333
+  }
+}
+

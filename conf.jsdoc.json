@@ -1,0 +1,32 @@
+{
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc"]
+    },
+    "source": {
+        "include": ["src"],
+        "exclude": ["node_modules"],
+        "includePattern": ".+\\.js(doc|x)?$"
+    },
+    "plugins": [],
+    "templates": {
+        "systemName": "COMPANY",
+        "footer": "Created by John Famas",
+        "copyright": "2017",
+        "navType": "vertical",
+        "linenums": true,
+        "collapseSymbols": false,
+        "inverseNav": false,
+        "cleverLinks": false,
+        "monospaceLinks": true,
+        "useLongnameInNav": false,
+        "showInheritedInNav": true
+    },
+    "opts": {
+        "encoding": "utf8",
+        "destination": "_tmp/docs/",
+        "recurse": true,
+        "verbose": true,
+        "template": "./node_modules/minami"
+    }
+}

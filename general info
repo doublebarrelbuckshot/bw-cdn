@@ -1,0 +1,3 @@
+gcloud app deploy --project [project id] //ex massive-petal-134415 [project id]
+
+project id: bw-cdn-181617

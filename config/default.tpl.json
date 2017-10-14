@@ -1,0 +1,57 @@
+{
+  "env": "default",
+  "name": "default",
+  "server": {
+    "port": 3333
+  },
+  "modules": {
+    "winston": {
+      "transports": {
+        "console": {
+          "level": "silly",
+          "colorize": true,
+          "label": "default console"
+        },
+        "file": {
+          "level": "silly",
+          "colorize": true,
+          "label": "default file",
+          "filename": "somefile.log"
+        }
+      },
+      "loggers": [
+        {
+          "name": "category1",
+          "transports": ["console"],
+          "options": {
+            "label": "category1"
+          }
+        },
+        {
+          "name": "controllers",
+          "transports": ["console", "file"],
+          "options": {
+            "label": "controllers"
+          }
+        },
+        {
+          "name": "__request",
+          "transports": ["console"],
+          "options": {
+            "label": "request",
+            "json": true
+          }
+        },
+        {
+          "name": "__errors",
+          "transports": ["console"],
+          "options": {
+            "label": "error",
+            "json": true
+          }
+        }
+      ]
+    }
+  },
+  "another": "another property not set by any other configuration steps"
+}
