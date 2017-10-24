@@ -13,6 +13,8 @@
 
 'use strict'
 const Promise = require('bluebird')
+const _ = require('lodash')
+
 const config = require('../../config')
 const CLOUD_BUCKET = config.get('CLOUD_BUCKET')
 
@@ -39,7 +41,6 @@ const kind = 'File'
  * @return {Promise}     Resolve/Reject(with error)
  */
 function sendUploadToGCS (req, res) {
-  console.error('inside senduploadtogcs')
   if (!req.files.file) {
     return Promise.resolve()
   }
@@ -48,7 +49,6 @@ function sendUploadToGCS (req, res) {
     const gcsname = Date.now() + req.files.file.name
     const file = bucket.file(gcsname)
 
-    console.error('printing req.files.file')
     console.error(req.files.file)
     const stream = file.createWriteStream({
       metadata: {
@@ -149,23 +149,30 @@ function toDatastore (obj, nonIndexed) {
 function list (limit, token, cb) {
   const q = ds.createQuery()
     .limit(limit)
-    //.order('title')
-    //.start(token)
+    // .order('title')
+    // .start(token)
 
   ds.runQuery(q, (err, entities, nextQuery) => {
     if (err) {
+      console.error('Error in listing entries')
       cb(err)
       return
     }
-    const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false;
+
+    const hasMore = nextQuery.moreResults !== Datastore.NO_MORE_RESULTS ? nextQuery.endCursor : false
     cb(null, entities.map(fromDatastore), hasMore)
   })
 }
 
-// Creates a new book or updates an existing book with new data. The provided
-// data is automatically translated into Datastore format. The book will be
-// queued for background processing.
+/**
+ * Updates a record on the datastore (or creates one if no id)
+ * @param id {string} id (if previous record exists)
+ * @param data {Object} data to save
+ * @param cb {Function} callback
+ * @return {}
+ */
 function update (id, data, cb) {
+  // let saveToDB = Promise.promisify(ds.save)
   let key
   if (id) {
     key = ds.key([kind, parseInt(id, 10)])
@@ -173,6 +180,8 @@ function update (id, data, cb) {
     console.error('NO ID')
     key = ds.key(kind)
   }
+
+  data = embellishData(data)
 
   console.error('KEY IS', key)
 
@@ -185,11 +194,30 @@ function update (id, data, cb) {
   ds.save(
     entity,
     (err) => {
-      console.error('ERROR SAVING: ', err)
+      if (err) {
+        console.error('ERROR SAVING: ', err)
+      }
+
       data.id = entity.key.id
       cb(err, err ? null : data)
     }
   )
+}
+
+/**
+ * Embellish the payload to send to datastore
+ * @param  {Object} Ordinary data to save
+ * @return {Object} Embellished data to save
+ */
+function embellishData (data) {
+  const now = new Date().getTime()
+
+  const basic = {
+    file_type: 'file',
+    created: now
+  }
+
+  return _.assign(basic, data)
 }
 
 function create (data, cb) {

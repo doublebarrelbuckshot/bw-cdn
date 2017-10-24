@@ -14,6 +14,8 @@ const loadRoutes = require('expressjs-routes-loader')
 const utilsLoadConfig = require('./utils/loadConfig')
 const fileUpload = require('express-fileupload')
 
+var cors = require('cors')
+
 const app = express()
 
 debug('start')
@@ -54,6 +56,9 @@ debug(`setup request logger: "${!!winstonLogger.__request}"`)
 if (winstonLogger.__request) {
   app.use(winstonLogger.__request)
 }
+
+// static directory
+app.use(express.static(__dirname + '/client/build'))
 
 // [start] setup routes with joi validation
 // see https://github.com/hapijs/joi
@@ -104,7 +109,7 @@ app.use((err, req, res, next) => {
   res.status(err.output.statusCode).json(err.output.payload)
 })
 
-debug('finish')
-console.error('finish')
+app.use(cors())
 
+debug('finish')
 module.exports = app

@@ -3,12 +3,11 @@
 const debug = require('debug')('app:createServer')
 const http = require('http')
 const app = require('../app')
-console.error('HERE')
 debug('start')
 
 // [start] setup port
 // -----------------------------------------------------------------------------
-const port = normalizePort(process.env.PORT || 3000)
+const port = normalizePort(process.env.PORT || 2999)
 app.set('port', port)
 
 // [start] create HTTP server

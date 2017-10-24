@@ -4,7 +4,7 @@
 const _ = require('lodash')
 const debug = require('debug')('src:controllers:users')
 const generateUsers = require('../../test/__fixtures__/users')
-
+const Promise = require('bluebird')
 const users = generateUsers(20)
 
 /**
@@ -33,11 +33,14 @@ function _findAll () {
  * @return {Object}
  */
 function get (req, res) {
-  const uuid = req.params.uuid
-  const result = uuid ? _findOne(uuid) : _findAll()
-  debug(`result length sent back ${result.length}`)
-
-  res.status(200).json(result)
+  return Promise.delay(5000)
+  .then(() => {
+    const uuid = req.params.uuid
+    const result = uuid ? _findOne(uuid) : _findAll()
+    debug(`result length sent back ${result.length}`)
+    return Promise.resolve(result) 
+  })
+  .then((result) => res.status(200).json(result))
 }
 
 module.exports = { get: get }

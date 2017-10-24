@@ -4,6 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const _ = require('lodash')
 const debug = require('debug')('src:controllers:assets')
+const Promise = require('bluebird')
 
 const dirname = path.join(__dirname, '../../data')
 const storage = require('../storages/datastore')
@@ -30,11 +31,8 @@ function get (req, res) {
 }
 
 function getFile (req, res) {
-  console.error('HERE')
   const name = req.params.name
-  console.error('dirnameis************************************************', dirname)
   res.sendFile(name, {root: dirname})
-  console.error('----------------------------------------')
 }
 
 function postFile (req, res) {
@@ -50,10 +48,18 @@ function postFile (req, res) {
   })
 }
 
+/**
+ * Saves a file to google storage and to datastore (meta data)
+ * @param req {Object} request object
+ * @param res {Object} response object
+ * @return {Promise} Save data to datastore promise
+ */
 function postFilex (req, res) {
-  storage.sendUploadToGCS(req, res)
+  const createPromise = Promise.promisify(storage.create)
+
+  return storage.sendUploadToGCS(req, res)
+
   .then(() => {
-    console.error('BODY IS***********')
     let data = req.body
 
     if (req.files.file) {
@@ -63,29 +69,30 @@ function postFilex (req, res) {
       return
     }
 
-    console.error('BEFORE CREATE')
+    return createPromise(req.body)
+  })
 
-    storage.create(req.body, (err, savedData) => {
-      console.error('AFTER CREATE')
-      if (err) {
-        res.send('Error Saving: ' + err)
-      } else {
-        console.error('Saved Data id: ', savedData.id)
-        res.send('File uploaded!' + req.files.file.cloudStoragePublicUrl + '   saved dataid: ' + savedData.id)
-      }
-    })
+  .then(savedData => {
+    console.error('Saved Data id: ', savedData.id)
+    res.send('File uploaded!' + req.files.file.cloudStoragePublicUrl + '   saved dataid: ' + savedData.id)
+  })
+  
+  .catch(err => {
+    res.send('Error Saving: ' + err)
   })
 }
 
 function listFiles (req, res) {
-  storage.list(10, req.query.pageToken, (err, entities, cursor) => {
-    if (err) {
-      console.error('*********************************ERROR IN LISTFILES', err)
-    }
-    res.json({
+  const prom = Promise.promisify(storage.list)
+  return prom(10, req.query.pageToken)
+  .then((entities, cursor) => {
+    return res.json({
       items: entities,
       nextPageToken: cursor
     })
+  })
+  .catch((err) => {
+    console.error('ERROR IN LISTFILES', err)
   })
 }
 
