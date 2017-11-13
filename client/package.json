@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "moment": "^2.19.1",
+    "prop-types": "^15.6.0",
     "react": "^16.0.0",
+    "react-awesome-modal": "^2.0.1",
     "react-big-calendar": "^0.16.1",
     "react-dom": "^16.0.0",
-    "react-event-calendar": "^0.3.0",
     "react-scripts": "1.0.14",
+    "react-simple-tab": "^1.0.1",
+    "react-simpletabs": "^0.7.0",
+    "react-tabs-navigation": "^0.4.4",
     "whatwg-fetch": "^2.0.3"
   },
   "scripts": {

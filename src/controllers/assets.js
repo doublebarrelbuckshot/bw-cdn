@@ -35,53 +35,6 @@ function getFile (req, res) {
   res.sendFile(name, {root: dirname})
 }
 
-function postFile (req, res) {
-  const file = req.files.file
-  const filepath = dirname + '/' + file.name
-
-  file.mv(filepath, function (err) {
-    if (err) {
-      return res.status(500).send(err)
-    }
-
-    res.send('File uploaded!')
-  })
-}
-
-/**
- * Saves a file to google storage and to datastore (meta data)
- * @param req {Object} request object
- * @param res {Object} response object
- * @return {Promise} Save data to datastore promise
- */
-function postFilex (req, res) {
-  const createPromise = Promise.promisify(storage.create)
-
-  return storage.sendUploadToGCS(req, res)
-
-  .then(() => {
-    let data = req.body
-
-    if (req.files.file) {
-      data.fileUrl = req.files.file.cloudStoragePublicUrl
-    } else {
-      res.send('No File')
-      return
-    }
-
-    return createPromise(req.body)
-  })
-
-  .then(savedData => {
-    console.error('Saved Data id: ', savedData.id)
-    res.send('File uploaded!' + req.files.file.cloudStoragePublicUrl + '   saved dataid: ' + savedData.id)
-  })
-  
-  .catch(err => {
-    res.send('Error Saving: ' + err)
-  })
-}
-
 function listFiles (req, res) {
   const prom = Promise.promisify(storage.list)
   return prom(10, req.query.pageToken)
@@ -99,7 +52,5 @@ function listFiles (req, res) {
 module.exports = {
   get: get,
   getFile: getFile,
-  listFiles: listFiles,
-  postFile: postFile,
-  postFilex: postFilex
+  listFiles: listFiles
 }

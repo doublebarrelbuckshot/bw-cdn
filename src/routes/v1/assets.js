@@ -35,48 +35,13 @@ const assetsRte = [
     notes: 'notes',
     tags: ['api', 'assets']
   }, {
-    url: '/asset/list/',
+    url: '/meta/list/',
     method: 'get',
     handler: assets.listFiles,
     description: 'Returns list of assets available',
     notes: 'notes',
     tags: ['api', 'assets']
-  }, {
-    url: '/assets/:name',
-    method: 'post',
-    handler: assets.postFile,
-    description: 'Returns list of assets available',
-    notes: 'notes',
-    tags: ['api', 'assets']
-  }, {
-    url: '/assetx/:name',
-    method: 'post',
-    handler: assets.postFilex,
-    description: 'Returns list of assets available',
-    notes: 'notes',
-    tags: ['api', 'assets']
   }
-
-  // {
-  //   url: '/users/:uuid/',
-  //   method: 'get',
-  //   handler: users.get,
-  //   response: {
-  //     status: {
-  //       200: Joi.array().required().items(
-  //         Joi.object().keys({
-  //           name: Joi.string(),
-  //           uuid: Joi.string()
-  //         })
-  //       ),
-  //       400: Joi.object().keys(errorSchema),
-  //       404: Joi.object().keys(errorSchema)
-  //     }
-  //   },
-  //   description: 'description',
-  //   notes: 'notes',
-  //   tags: ['api', 'users']
-  // }
 ]
 
 module.exports = assetsRte
